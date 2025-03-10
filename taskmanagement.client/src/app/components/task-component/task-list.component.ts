@@ -14,15 +14,13 @@ export class TaskListComponent {
 
   taskList: TaskModel[] = [];
   form: FormGroup;
-  isUpdate =false;
+  selectedTask: TaskModel = new TaskModel();
   constructor(private taskService: TaskService, private router: Router, private fb: FormBuilder) {
     this.form = this.fb.group({
-      id:[],
       title: ['', Validators.required],
       description: [''],
       dueDate: [],
       isCompleted: [false],
-      userId: [],
 
     });
 }
@@ -38,7 +36,7 @@ export class TaskListComponent {
     });
   }
 
-  deleteTask(id: number): void {
+  deleteTask(id: string): void {
     this.taskService.deleteTask(id).subscribe(() => {
       this.loadTasks();
     });
@@ -47,40 +45,38 @@ export class TaskListComponent {
 
   showModal(task?: TaskModel) {
     if (task) {
-      this.isUpdate = true;
-      this.form.controls["id"].setValue(task.id)
+      this.selectedTask = task;
       this.form.controls["title"].setValue(task.title);
       this.form.controls["description"].setValue(task.description);
       this.form.controls["dueDate"].setValue(task.dueDate);
       this.form.controls["isCompleted"].setValue(task.isCompleted);
-      this.form.controls["userId"].setValue(task.userId);
 
     }
     else {
-      this.form.controls["id"].setValue('')
       this.form.controls["title"].setValue('');
       this.form.controls["description"].setValue('');
       this.form.controls["dueDate"].setValue('');
       this.form.controls["isCompleted"].setValue('');
-      this.form.controls["userId"].setValue('');
     }
   }
   OnSubmit(): void {
+    this.form.updateValueAndValidity();
     if (this.form.valid) {
-      if (!this.isUpdate) {
-        this.taskService.createTask(this.form.value).subscribe(() => {
+      if (this.selectedTask.id == '') {
+        this.taskService.createTask(this.form.value).pipe().subscribe(()=> {
           this.loadTasks();
 
         });
       } else {
-        this.taskService.updateTask(this.form.value).subscribe(() => {
+        this.taskService.updateTask(this.selectedTask.id, this.form.value).pipe().subscribe(() => {
           this.loadTasks();
 
         });
       }
+      this.form.reset();
+      this.form.clearValidators();
 
     }
-
   }
 
 }

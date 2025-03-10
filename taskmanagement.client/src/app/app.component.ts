@@ -1,7 +1,6 @@
 import { GoogleLoginProvider, SocialAuthService } from '@abacritt/angularx-social-login';
 import { Component, OnInit } from '@angular/core';
 import { UserRegistrationService } from './service/user-registration-service';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 
@@ -20,14 +19,23 @@ export class AppComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
+    this.getAccessToken();
+    if (this.accessToken == '') {
+      this.router.navigate(['/login']);
+    }
     this.authService.authState.subscribe((user) => {
       if (user) {
-        this.isUserConnected = true;
-        this.userRegistrationService.registerUser().pipe().subscribe(x => {
-        });
+        this.router.navigate(['/task-list']);
+        this.userRegistrationService.registerUser().pipe().subscribe(); 
       }
     });
 
+  }
+
+  getAccessToken(): void {
+    this.authService.getAccessToken(GoogleLoginProvider.PROVIDER_ID).then(accessToken => {
+      this.accessToken = accessToken;
+    });
   }
 
 

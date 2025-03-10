@@ -33,11 +33,12 @@ namespace TaskManagement.Server.Services
             return await _context.Tasks.Include(y => y.UserRegistration).Where(t => t.UserId == userId)?.ToListAsync();
         }
 
-        public async Task AddTask(int userId, TaskModel task )
+        public async Task<TaskModel> AddTask(int userId, TaskModel task )
         {
             task.UserId = userId;
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
+            return task;
         }
 
         public async Task UpdateTask(TaskModel task)

@@ -19,13 +19,17 @@ namespace TaskManagement.Server.Services
         }
         public async Task RegisterUser(string userEmail)
         {
-            UserRegistrationModel entity = new UserRegistrationModel()
+            var user = GetRegisteredUserByEmail(userEmail);
+            if (user == null)
             {
-                Name = userEmail,
-                RegistrationDate = DateTime.Now,
-            };
-            _context.UserRegistrations.Add(entity);
-            await _context.SaveChangesAsync();
+                UserRegistrationModel entity = new UserRegistrationModel()
+                {
+                    Name = userEmail,
+                    RegistrationDate = DateTime.Now,
+                };
+                _context.UserRegistrations.Add(entity);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -10,7 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+    <Compile Remove="Authentification\**" />
+    <Content Remove="Authentification\**" />
+    <EmbeddedResource Remove="Authentification\**" />
+    <None Remove="Authentification\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.36" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy">
@@ -34,10 +40,6 @@
     <ProjectReference Include="..\taskmanagement.client\taskmanagement.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Authentification\" />
   </ItemGroup>
 
 </Project>

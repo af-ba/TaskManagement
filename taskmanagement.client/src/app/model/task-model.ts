@@ -1,8 +1,8 @@
 export class TaskModel {
-  id: number = 0;
+  id: string ='';
   title: string ='';
   description: string = '';
-  dueDate: string ='';
+  dueDate: Date | undefined;
   isCompleted: boolean = false;
   userId: string = '';
 }

@@ -7,7 +7,7 @@ namespace TaskManagement.Server.Interface
     {
         Task<TaskModel> GetTaskById(int id, int userId);
         Task<List<TaskModel>> GetAllTasks(int userId);
-        Task AddTask(int userId, TaskModel entity);
+        Task<TaskModel> AddTask(int userId, TaskModel entity);
         Task UpdateTask(TaskModel entity);
         Task DeleteTask(TaskModel task);
     }

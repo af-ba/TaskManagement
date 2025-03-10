@@ -1,7 +1,7 @@
-﻿using Google;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using TaskManagement.Server.Data;
 using TaskManagement.Server.Interface;
 using TaskManagement.Server.Models;
@@ -24,8 +24,11 @@ namespace TaskManagement.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
         {
-            int userId = _userService.GetRegisteredUserByEmail(this.User.Identity.Name).Id;
-            List<TaskModel> tasks = await _taskService.GetAllTasks(userId);
+            var userId = _userService.GetRegisteredUserByEmail(this.User.Identity.Name)?.Id;
+            if(userId == null) {
+                return BadRequest("this user does not has any tasks");
+            }
+            List<TaskModel> tasks = await _taskService.GetAllTasks(userId.Value);
             return Ok(tasks);
         }
 
@@ -45,19 +48,32 @@ namespace TaskManagement.Server.Controllers
         [HttpPost]
         public async Task<ActionResult> AddTask(TaskModel entityToAdd)
         {
+            if (!IsValid(entityToAdd))
+            {
+                return BadRequest("Fields should be valid");
+            }
             int userId = _userService.GetRegisteredUserByEmail(this.User.Identity.Name).Id;
-            await _taskService.AddTask(userId, entityToAdd);
-            return NoContent();
+            TaskModel addedEntity = await _taskService.AddTask(userId, entityToAdd);
+            return CreatedAtAction("GetTask",new { id = addedEntity.Id }, addedEntity);
         }
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(TaskModel entityToUpdate)
+        public async Task<IActionResult> UpdateTask(int id,TaskModel entityToUpdate)
         {
             int userId = _userService.GetRegisteredUserByEmail(this.User.Identity.Name).Id;
+            if (!IsValid(entityToUpdate))
+            {
+                return BadRequest("Fields should be valid");
+            }
             if (entityToUpdate.UserId != userId)
             {
                 return BadRequest("only owners can update their tasks");
+            }
+            var task = await _taskService.GetTaskById(id, userId);
+            if (task == null)
+            {
+                return NotFound();
             }
             await _taskService.UpdateTask(entityToUpdate);
             return NoContent();
@@ -74,6 +90,12 @@ namespace TaskManagement.Server.Controllers
             }
             await _taskService.DeleteTask(task);
             return NoContent();
+        }
+
+
+        private bool IsValid(TaskModel task)
+        {
+            return !string.IsNullOrEmpty(task.Title) && task.DueDate != null;
         }
     }
 }
