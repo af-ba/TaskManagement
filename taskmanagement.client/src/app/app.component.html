@@ -1,0 +1,5 @@
+<app-login *ngIf="!isUserConnected"> </app-login>
+<app-task-list *ngIf="isUserConnected"> </app-task-list>
+
+<router-outlet></router-outlet>
+
