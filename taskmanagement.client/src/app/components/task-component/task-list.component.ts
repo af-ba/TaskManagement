@@ -56,7 +56,7 @@ export class TaskListComponent {
       this.form.controls["title"].setValue('');
       this.form.controls["description"].setValue('');
       this.form.controls["dueDate"].setValue('');
-      this.form.controls["isCompleted"].setValue('');
+      this.form.controls["isCompleted"].setValue(false);
     }
   }
   OnSubmit(): void {
@@ -73,6 +73,7 @@ export class TaskListComponent {
 
         });
       }
+      document.getElementById("closeModal")?.click();
       this.form.reset();
       this.form.clearValidators();
 

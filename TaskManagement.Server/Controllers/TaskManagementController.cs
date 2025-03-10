@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using TaskManagement.Server.Data;
 using TaskManagement.Server.Interface;
 using TaskManagement.Server.Models;
@@ -66,16 +65,16 @@ namespace TaskManagement.Server.Controllers
             {
                 return BadRequest("Fields should be valid");
             }
-            if (entityToUpdate.UserId != userId)
-            {
-                return BadRequest("only owners can update their tasks");
-            }
             var task = await _taskService.GetTaskById(id, userId);
             if (task == null)
             {
                 return NotFound();
             }
-            await _taskService.UpdateTask(entityToUpdate);
+            task.Title = entityToUpdate.Title;
+            task.Description = entityToUpdate.Description;
+            task.IsCompleted = entityToUpdate.IsCompleted;
+            task.DueDate = entityToUpdate.DueDate;
+            await _taskService.UpdateTask(task);
             return NoContent();
         }
 

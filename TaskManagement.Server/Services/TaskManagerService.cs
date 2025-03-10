@@ -30,7 +30,7 @@ namespace TaskManagement.Server.Services
 
         public async Task<List<TaskModel>> GetAllTasks(int userId)
         {
-            return await _context.Tasks.Include(y => y.UserRegistration).Where(t => t.UserId == userId)?.ToListAsync();
+            return await _context.Tasks.Include(y => y.UserRegistration).Where(t => t.UserId == userId).AsNoTracking().ToListAsync();
         }
 
         public async Task<TaskModel> AddTask(int userId, TaskModel task )

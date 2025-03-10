@@ -67,7 +67,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
-app.Run();
 var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetService<DBContextClass>();
 dbContext.Database.Migrate();
+app.Run();
+
